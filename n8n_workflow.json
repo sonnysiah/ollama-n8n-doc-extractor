@@ -1,0 +1,84 @@
+{
+  "name": "Doc Extractor Output Flow",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "C:\\test\\output",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Watch Output Folder",
+      "type": "n8n-nodes-base.watchFilesystem",
+      "typeVersion": 1,
+      "position": [400, 200]
+    },
+    {
+      "parameters": {
+        "functionCode": "return items.map(item => {\n  const filepath = item.json.path;\n  const filename = item.json.fileName;\n  return {\n    json: {\n      file_path: filepath,\n      file_name: filename\n    }\n  };\n});"
+      },
+      "id": "2",
+      "name": "Prepare File Info",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [650, 200]
+    },
+    {
+      "parameters": {
+        "filePath": "={{$json[\"file_path\"]}}"
+      },
+      "id": "3",
+      "name": "Read File",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4",
+      "name": "Log File",
+      "type": "n8n-nodes-base.debug",
+      "typeVersion": 1,
+      "position": [1150, 200]
+    }
+  ],
+  "connections": {
+    "Watch Output Folder": {
+      "main": [
+        [
+          {
+            "node": "Prepare File Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare File Info": {
+      "main": [
+        [
+          {
+            "node": "Read File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read File": {
+      "main": [
+        [
+          {
+            "node": "Log File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "id": "DocExtractorWorkflow"
+}
